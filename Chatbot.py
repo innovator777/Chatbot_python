@@ -4,6 +4,9 @@ from flask import Flask, request;
 from flaskext.mysql import MySQL;
 import json;
 import properties;
+import answer;
+import check;
+import database;
 
 app = Flask(__name__)
 mysql = MySQL();
@@ -23,7 +26,7 @@ def keyboard():
     }
     return json.dumps(result);
 
-@app.route('/message', methods=['POST'])
+@app.route('/message', methods=["GET", "POST"])
 def message():
 
     message = request.get_json();
@@ -31,30 +34,31 @@ def message():
 
     print(content)
 
-    if content == u"시작하기":
-        result = {
-            "message": {
-                "text": "아직 개발중이라 대답을 잘 못해도 이해해줘^^;"
-            }
-        }
-    elif content == u"도움말":
-        result = {
-            "message": {
-                "text": "이제 곧 정식 버전이 출시될거야. 조금만 기다려~~~"
-            }
-        }
-    elif u"안녕" in content:
-        result = {
-            "message": {
-                "text": "안녕~~ 반가워 ㅎㅎ"
-            }
-        }
+    if content == u"사용방법":
+        result = answer.getManual();
+    elif content == u"소개":
+        result = answer.getIntroduce();
+    elif content == u"지원요건":
+        result = answer.getApplyConditions();
+    elif content == u"지원방법":
+        result = answer.getApplyInformation();
+    elif check.applyCondition(content):
+        cursor = mysql.connect().cursor();
+        cursor.execute(database.getAddTarget(), content);
+        mysql.connection.commit()
+        result = answer.getApplySuccess();
+    elif check.managerCommand(content):
+        cursor = mysql.get_db().cursor();
+    	cursor.execute(database.getAllTarget());
+
+        result = []
+        for row in cursor:
+            print(row);
+            result.append(row);
+
     else:
-        result = {
-            "message": {
-                "text": "나랑 놀자 ㅋㅋㅋ"
-            }
-        }
+        result = answer.getDefault();
+
     return json.dumps(result)
 
 
