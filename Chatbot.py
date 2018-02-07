@@ -1,4 +1,4 @@
-#-*- coding:utf-8 -*-
+#-*- coding: utf-8 -*-
 
 from flask import Flask, request;
 from flaskext.mysql import MySQL;
@@ -17,6 +17,7 @@ app.config['MYSQL_DATABASE_DB'] = properties.getDatabaseDB();
 app.config['MYSQL_DATABASE_HOST'] = properties.getDatabaseHost();
 
 mysql.init_app(app);
+
 
 
 @app.route('/keyboard')
@@ -51,10 +52,25 @@ def message():
         cursor = mysql.get_db().cursor();
     	cursor.execute(database.getAllTarget());
 
-        result = []
-        for row in cursor:
-            print(row);
-            result.append(row);
+        # rows = cursor.fetchall();
+        # array = []
+        # for first, second in rows:
+        #     array.append("%s. %s" % (first ,second));
+        #
+        # message = ""
+        # for data in array:
+        #     message = message + data + '\n'
+
+        rows = cursor.fetchall();
+        message = ""
+        for first, second in rows:
+            message = message + "%s. %s" % (first ,second) + '\n';
+
+        result = {
+            "message": {
+                "text": message
+            }
+        }
 
     else:
         result = answer.getDefault();
