@@ -44,9 +44,10 @@ def message():
     elif content == u"지원방법":
         result = answer.getApplyInformation();
     elif check.applyCondition(content):
-        cursor = mysql.connect().cursor();
+        cursor = mysql.get_db().cursor();
         cursor.execute(database.getAddTarget(), content);
-        mysql.connection.commit()
+        # mysql.connect().commit();
+        mysql.get_db().commit();
         result = answer.getApplySuccess();
     elif check.managerCommand(content):
         cursor = mysql.get_db().cursor();
