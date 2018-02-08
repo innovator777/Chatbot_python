@@ -45,14 +45,19 @@ def message():
         result = answer.getApplyInformation();
     elif check.applyCondition(content):
         cursor = mysql.get_db().cursor();
-        cursor.execute(database.getAddTarget(), content);
+        cursor.execute(database.addTarget(), content);
         # mysql.connect().commit();
         mysql.get_db().commit();
         result = answer.getApplySuccess();
-    elif check.managerCommand(content):
+    elif check.command(content):
         cursor = mysql.get_db().cursor();
-    	cursor.execute(database.getAllTarget());
-
+        value = check.managedCommand(content);
+        if value == 1:
+            cursor.execute(database.getAllTarget());
+        elif value == 2:
+            text = content.replace(" ", "");
+            target = text.split('r');
+            cursor.execute(database.getTarget(), target[1]);
         # rows = cursor.fetchall();
         # array = []
         # for first, second in rows:
@@ -63,6 +68,7 @@ def message():
         #     message = message + data + '\n'
 
         rows = cursor.fetchall();
+        print(rows);
         message = ""
         for first, second in rows:
             message = message + "%s. %s" % (first ,second) + '\n';
