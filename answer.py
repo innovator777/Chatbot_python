@@ -71,3 +71,20 @@ def getApplyFail():
         }
     }
     return result;
+
+def getDeleteSuccess():
+    result = {
+        "message": {
+            "text": "정상적으로 삭제되었습니다."
+        }
+    }
+    return result;
+
+def getDeleteFail():
+    result = {
+        "message": {
+            "text": "삭제를 실패하였습니다.\n"
+						+ "다시 입력해주세요"
+        }
+    }
+    return result;

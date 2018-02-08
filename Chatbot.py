@@ -46,7 +46,6 @@ def message():
     elif check.applyCondition(content):
         cursor = mysql.get_db().cursor();
         cursor.execute(database.addTarget(), content);
-        # mysql.connect().commit();
         mysql.get_db().commit();
         result = answer.getApplySuccess();
     elif check.command(content):
@@ -58,26 +57,29 @@ def message():
             text = content.replace(" ", "");
             target = text.split('r');
             cursor.execute(database.getTarget(), target[1]);
-        # rows = cursor.fetchall();
-        # array = []
-        # for first, second in rows:
-        #     array.append("%s. %s" % (first ,second));
-        #
-        # message = ""
-        # for data in array:
-        #     message = message + data + '\n'
+        elif value == 3:
+            text = content.replace(" ", "");
+            target = text.split('r');
+            cursor.execute(database.deleteTarget(), target[1]);
+            mysql.get_db().commit();
+            result = answer.getDeleteSuccess();
+        else:
+            result = answer.getDefault();
 
-        rows = cursor.fetchall();
-        print(rows);
-        message = ""
-        for first, second in rows:
-            message = message + "%s. %s" % (first ,second) + '\n';
 
-        result = {
-            "message": {
-                "text": message
+        if value == 1 or value == 2:
+            rows = cursor.fetchall();
+            print(rows);
+            message = ""
+            for first, second in rows:
+                message = message + "%s. %s" % (first ,second) + '\n';
+
+            result = {
+                "message": {
+                    "text": message
+                }
             }
-        }
+
 
     else:
         result = answer.getDefault();
